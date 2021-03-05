@@ -1,0 +1,76 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+    DOM1 DB 'Inserisci il primo numero', 13,10,'$'
+    DOM2 DB 'Inserisci il secondo numero', 13,10,'$'
+    RIS DB 'Risultato: ', 13,10,'$'
+
+.CODE
+    .STARTUP
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    ;output dove richedo il primo numero
+    MOV AH,09H
+    MOV DX, OFFSET DOM1
+    INT 21H
+    
+    ;input
+    MOV AH,01H
+    INT 21H
+    
+    ;sposto l'input in BL
+    MOV BL,AL    
+    
+    ;nuova linea
+    MOV AH, 0EH  
+    MOV AL, 0DH
+    INT 10H
+    MOV AL, 0AH
+    INT 10H
+
+    ;output dove richedo il secondo numero
+    MOV AH,9H
+    MOV DX, OFFSET DOM2
+    INT 21H
+    
+    ;input
+    MOV AH,01H
+    INT 21H
+    
+    ;sposto l'input in CL
+    MOV CL,AL    
+    
+    ;nuova linea
+    MOV AH, 0EH  
+    MOV AL, 0DH
+    INT 10H
+    MOV AL, 0AH
+    INT 10H
+    
+    ;trasformo da char a numero sottraendo 30H 
+    SUB BL, 30h       
+    SUB CL, 30h       
+
+    ;sottrazione
+    SUB BL, CL
+    
+    ;trasformo da numero a char aggiungendo 30H
+    ADD BL, 30H
+
+    ;output della sottrazione (stringa fissa)
+    MOV AH,09H
+    MOV DX, OFFSET RIS
+    INT 21H
+    
+    ;output della sottrazione (variabile, ovvero BL)
+    MOV AH,02H
+    MOV DL,BL
+    INT 21H
+
+    ;termina il programma
+    MOV AH,4CH
+    INT 21H
+    
+END
