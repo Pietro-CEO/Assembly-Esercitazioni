@@ -1,0 +1,111 @@
+;Espressione: x+3y-2x
+
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+    NUM1 DB ?
+    NUM2 DB ?
+    NUM3 DB ?
+    DOM1 DB 'Inserisci il primo numero (X)', 13,10,'$'
+    DOM2 DB 'Inserisci il secondo numero (Y)', 13,10,'$'
+    DOM3 DB 'Inserisci il terzo numero (Z)', 13,10,'$'
+    SUM DB ?
+    RIS DB 'Risultato: ', 13,10,'$'
+
+.CODE
+
+    .STARTUP
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    ;INPUT DI X
+    MOV AH,09H
+    MOV DX, OFFSET DOM1
+    INT 21H
+    
+    MOV AH,01H
+    INT 21H
+    MOV NUM1,AL
+    
+    ;nuova linea
+    MOV AH, 0EH  
+    MOV AL, 0DH
+    INT 10H
+    MOV AL, 0AH
+    INT 10H
+    
+    ;INPUT DI Y 
+    MOV AH,09H
+    MOV DX, OFFSET DOM2
+    INT 21H
+    
+    MOV AH,01H
+    INT 21H
+    MOV NUM2,AL
+    
+    ;nuova linea
+    MOV AH, 0EH  
+    MOV AL, 0DH
+    INT 10H
+    MOV AL, 0AH
+    INT 10H
+    
+    ;INPUT DI Z
+    MOV AH,09H
+    MOV DX, OFFSET DOM3
+    INT 21H
+    
+    MOV AH,01H
+    INT 21H
+    MOV NUM3,AL
+    
+    ;nuova linea
+    MOV AH, 0EH  
+    MOV AL, 0DH
+    INT 10H
+    MOV AL, 0AH
+    INT 10H
+    
+    ;trasformo da char a numero sottraendo 30H 
+    SUB NUM1,30H       
+    SUB NUM2,30H   
+    SUB NUM3,30H    
+
+    
+    ;ELABORAZIONE
+    
+    MOV AL,NUM2
+    ADD AL,NUM2
+    ADD AL,NUM2
+    MOV NUM2,AL
+    
+    MOV AL,NUM3
+    ADD AL,NUM3
+    MOV NUM3,AL
+    
+    MOV AL,NUM1
+    ADD AL,NUM2
+    SUB AL,NUM3
+    
+    MOV SUM,AL
+    
+    ;trasformo da numero a char aggiungendo 30H
+    ADD SUM,30H
+    
+    ;OUTPUT
+    
+    MOV AH,09H
+    MOV DX,OFFSET RIS
+    INT 21H
+    
+    MOV AH,02H
+    MOV DL,SUM
+    INT 21H
+    
+    ;TERMINO IL PROGRAMMA
+    
+    MOV AH,4CH
+    INT 21H
+    
+END
