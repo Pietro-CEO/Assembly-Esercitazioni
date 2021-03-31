@@ -1,0 +1,94 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA 
+    NUM1 DB ?
+    NUM2 DB ?
+    DOM1 DB 'Inserisci il Primo numero:',13,10,'$'
+    DOM2 DB 'Inserisci il secondo numero:',13,10,'$'
+    RIS DB 'Il minore e:',13,10,'$'
+    
+.CODE
+.STARTUP
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    ;input primo numero
+    MOV AH,09H
+    MOV DX, OFFSET DOM1
+    INT 21H
+    MOV AH,01H
+    INT 21H
+    MOV NUM1,AL
+    
+    ;nuova linea
+    MOV AH,0EH  
+    MOV AL,0DH
+    INT 10H
+    MOV AL,0AH
+    INT 10H
+    
+    ;input secondo numero
+    MOV AH,09H
+    MOV DX, OFFSET DOM2
+    INT 21H
+    MOV AH,01H
+    INT 21H
+    MOV NUM2,AL
+    
+    ;nuova linea
+    MOV AH,0EH  
+    MOV AL,0DH
+    INT 10H
+    MOV AL,0AH
+    INT 10H
+   
+   ;elaborazione
+   
+    MOV AL, NUM1
+    
+    CMP AL, NUM2
+    JG VERO1 
+    JMP FALSO
+         
+  VERO1: 
+  
+    ;nuova linea
+    MOV AH, 0EH  
+    MOV AL, 0DH
+    INT 10H
+    MOV AL, 0AH
+    INT 10H
+    
+    ;stampo RIS e NUM2
+    MOV DX,OFFSET RIS
+    MOV AH,09H
+    INT 21H
+    MOV AH,02H
+    MOV DL,NUM2
+    INT 21H
+    JMP FINE
+         
+  FALSO: 
+  
+    ;nuova linea
+    MOV AH,0EH  
+    MOV AL,0DH
+    INT 10H
+    MOV AL,0AH
+    INT 10H
+    
+    ;stampo RIS e NUM1
+    MOV DX,OFFSET RIS
+    MOV AH,09H
+    INT 21H
+    MOV AH,02H
+    MOV DL,NUM1
+    INT 21H
+ 
+  FINE: 
+  
+    MOV AH,4CH
+    INT 21H 
+        
+ END
