@@ -1,0 +1,76 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA 
+    NUM DB ?
+    CONTANUM DB 0
+    DOM1 DB 'Inserisci un carattere:',13,10,'$'
+    FIN DB 'Numero di caratteri compresi tra 1 e 9:',13,10,'$'
+    
+.CODE
+.STARTUP
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    MOV BL,3 
+    
+    CICLO:
+        ;SE CONTATORE É MINORE DI 1 FINISCO, OVVERO HO DATO IN INPUT TUTTI E 3 I CARATTERI TERMINO L 'ESECUZIONE
+        CMP BL,1
+        JB FINE
+        
+        DEC BL
+        
+        ;input un carattere
+        MOV AH,09H
+        MOV DX, OFFSET DOM1
+        INT 21H
+        MOV AH,01H
+        INT 21H
+        MOV NUM,AL
+
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+        ;
+        CMP NUM,31H
+        JGE CICLO2
+        JMP CICLO
+
+    CICLO2:
+        CMP NUM,39H
+        JBE CHARISMAIUSC
+        JMP CICLO
+    
+    CHARISMAIUSC:
+        INC CONTANUM
+        JMP CICLO
+    
+    FINE:
+        ;convetro da ascii a numero
+        ADD CONTANUM,30H
+        
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+        ;stampo FIN
+        MOV AH,09H
+        MOV DX, OFFSET FIN 
+        INT 21H
+        ;stamo CONTANUM
+        MOV AH,02H
+        MOV DL,CONTANUM
+        INT 21H
+        
+        MOV AH,4CH
+        INT 21H
+    
+END
