@@ -1,0 +1,89 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA 
+    CHAR DB ?
+    CONTAMAIUSC DB 0
+    DOM1 DB 'Inserisci il numero di caratteri da inserire:',13,10,'$'
+    DOM2 DB 'Inserisci un carattere:',13,10,'$'
+    FIN DB 'Numero di lettere maiuscole inserite:',13,10,'$'
+
+.CODE
+    .STARTUP
+    MOV AX,@DATA
+    MOV DS,AX
+
+    ;input del numero di iterazioni
+    MOV AH,09H
+    MOV DX, OFFSET DOM1
+    INT 21H
+    MOV AH,01H
+    INT 21H
+    MOV BL,AL
+    
+    ;trasformo il char inserito a numero
+    SUB BL,30h
+
+    CICLO:
+        ;controllo iterazioni rimaste
+        CMP BL, 1
+        JB FINE
+
+        ;sottraggo 1 a BL
+        DEC BL
+        
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+
+        ;input del carattere
+        MOV AH,09H
+        MOV DX, OFFSET DOM2
+        INT 21H
+        MOV AH,01H
+        INT 21H
+        MOV CHAR,AL
+
+        ;primo controllo lettera maiuscola, vai a se2
+        CMP CHAR, 41h
+        JGE SE2
+        JMP CICLO
+
+    SE2:
+        ;primo controllo lettera maiuscola, vai a ISMAIUSC
+        CMP CHAR, 90
+        JBE ISMAIUSC
+        JMP CICLO
+
+    ISMAIUSC:
+        INC CONTAMAIUSC
+        JMP CICLO
+
+    FINE:
+        ;convetro da ascii a numero
+        ADD CONTAMAIUSC,30h
+        
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+        ;stampo FIN
+        MOV AH,09H
+        MOV DX, OFFSET FIN 
+        INT 21H
+        ;stamo CONTAMAIUSC
+        MOV AH,02H
+        MOV DL,CONTAMAIUSC
+        INT 21H
+
+        ;sequenza finale
+        MOV AH,4CH
+        INT 21H
+
+END
