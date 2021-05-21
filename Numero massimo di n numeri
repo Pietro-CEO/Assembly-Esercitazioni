@@ -27,11 +27,11 @@
     SUB BL,30H
     
     ;nuova linea
-        MOV AH, 0EH  
-        MOV AL, 0DH
-        INT 10H
-        MOV AL, 0AH
-        INT 10H
+	MOV AH, 0EH  
+    MOV AL, 0DH
+	INT 10H
+	MOV AL, 0AH
+	INT 10H
         
     CICLO:
         ;se contatore minore di 1 termino il programma
