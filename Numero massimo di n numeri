@@ -1,0 +1,116 @@
+;BONTEMPI PIETRO 3A INT
+
+.MODEL SMALL
+.STACK 100H
+
+.DATA 
+    NUM DB ?
+    DOM1 DB 'Inserisci il numero di caratteri da inserire:',13,10,'$'
+    DOM2 DB 'Inserisci un numero:',13,10,'$'
+    ERRORE DB 'Il carattere inserito non e un numero, inserire un numero:',13,10,'$'
+    FIN DB 'Numero maggiore:',13,10,'$'
+    
+.CODE
+.STARTUP
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    ;input del numero di caratteri da inserire
+    MOV AH,09H
+    MOV DX, OFFSET DOM1
+    INT 21H
+    MOV AH,01H
+    INT 21H
+    MOV BL,AL
+    
+    ;converto il numero inserito da char a numero
+    SUB BL,30H
+    
+    ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+    CICLO:
+        ;se contatore minore di 1 termino il programma
+        CMP BL,1
+        JB FINE
+        
+        DEC BL
+        
+        ;input un NUMERO
+        MOV AH,09H
+        MOV DX, OFFSET DOM2
+        INT 21H
+        MOV AH,01H
+        INT 21H
+        MOV NUM,AL
+
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+        ;controllo che il carattere inserito sia un numero
+        CMP NUM,30H
+        JB CHARISNOTNUM
+        CMP NUM,39H
+        JG CHARISNOTNUM
+
+        ;se il numero insertio e maggiore del numero massimo precedente allora vado a NUMISGREATER
+        CMP NUM, CL
+        JG NUMISGREATER
+        JMP CICLO
+        
+    NUMISGREATER:
+    
+        ;il numero inserito diventa il nuovo numero massimo
+        MOV CL, NUM
+        JMP CICLO
+    
+    CHARISNOTNUM:
+    
+        ;stampo il messaggio di errore
+        MOV AH,09H
+        MOV DX, OFFSET ERRORE
+        INT 21H
+        
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+        ;incremento di 1 il contatore in qunato ho scartato l esito del ciclo
+        INC BL
+        
+        JMP CICLO
+    
+    FINE:
+        
+        ;nuova linea
+        MOV AH, 0EH  
+        MOV AL, 0DH
+        INT 10H
+        MOV AL, 0AH
+        INT 10H
+        
+        ;stampo il messaggio del risultato
+        MOV AH,09H
+        MOV DX, OFFSET FIN 
+        INT 21H
+        
+        ;stampo il numero maggiore
+        MOV AH,02H
+        MOV DL,CL
+        INT 21H
+        
+        MOV AH,4CH
+        INT 21H
+    
+END
